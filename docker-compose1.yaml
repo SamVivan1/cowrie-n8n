@@ -22,4 +22,5 @@ services:
       - COWRIE_OUTPUT_HTTP_URL=https://n8n.samvivan.my.id/webhook-test/10e4c630-6bce-4038-8777-916fba8bdc28
       # 3. (Opsional) Timeout jika n8n Anda lambat merespons
       - COWRIE_OUTPUT_HTTP_TIMEOUT=5
+      - COWRIE_SSH_WHITELIST_ENABLED=false
     restart: unless-stopped
