@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  cowrie:
+    image: cowrie/cowrie:latest
+    container_name: cowrie
+    restart: always
+    ports:
+      - "2222:2222"   # SSH honeypot
+      - "2223:2223"   # Telnet honeypot
+    environment:
+      - COWRIE_USER=cowrie
+      - COWRIE_GROUP=cowrie
+    volumes:
+      - ./cowrie/etc:/cowrie/cowrie-git/etc
+      - ./cowrie/var:/cowrie/cowrie-git/var
+
+  cowrie-log-forwarder:
+    build: ./log_forwarder
+    container_name: cowrie-log-forwarder
+    restart: always
+    depends_on:
+      - cowrie
+    environment:
+      - N8N_WEBHOOK_URL=https://n8n.samvivan.my.id/webhook/10e4c630-6bce-4038-8777-916fba8bdc28
+    volumes:
+      - ./cowrie/var/log:/logs
