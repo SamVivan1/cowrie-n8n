@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   cowrie:
     image: cowrie/cowrie:latest
@@ -9,11 +7,15 @@ services:
       - "2222:2222"   # SSH honeypot
       - "2223:2223"   # Telnet honeypot
     environment:
-      - COWRIE_USER=cowrie
-      - COWRIE_GROUP=cowrie
-    volumes:
-      - ./cowrie/etc:/cowrie/cowrie-git/etc
-      - ./cowrie/var:/cowrie/cowrie-git/var
+      COWRIE_USER: cowrie
+      COWRIE_GROUP: cowrie
+    command: >
+      bash -c "if [ ! -f /cowrie/cowrie-git/var/log/cowrie.json ]; then
+                 echo '🛠️ First-time setup: initializing Cowrie...';
+                 cp -r /cowrie/cowrie-git/etc.dist /cowrie/cowrie-git/etc &&
+                 cp -r /cowrie/cowrie-git/var.dist /cowrie/cowrie-git/var;
+               fi &&
+               /cowrie/cowrie-env/bin/twistd -n cowrie"
 
   cowrie-log-forwarder:
     build: ./log_forwarder
@@ -22,6 +24,10 @@ services:
     depends_on:
       - cowrie
     environment:
-      - N8N_WEBHOOK_URL=https://n8n.samvivan.my.id/webhook/10e4c630-6bce-4038-8777-916fba8bdc28
+      - N8N_WEBHOOK_URL=https://n8n.example.com/webhook/cowrie-log
     volumes:
-      - ./cowrie/var/log:/logs
+      - cowrie_logs:/logs
+
+volumes:
+  cowrie_logs:
+    name: cowrie_logs
