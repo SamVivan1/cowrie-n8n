@@ -1,0 +1,25 @@
+services:
+  cowrie:
+    image: cowrie/cowrie:latest
+    container_name: cowrie_honeypot
+    ports:
+      # Map port 22 (SSH) & 23 (Telnet) di dalam container
+      # ke port 2222 & 2323 di server host Anda.
+      # (Hindari konflik dengan port SSH asli server Anda)
+      - "2222:22"
+      - "2323:23"
+    volumes:
+      # Membuat data log dan file yang diunduh penyerang tetap ada (persistent)
+      # di folder 'var' di host Anda.
+      - ./var:/cowrie/var
+      # Membuat konfigurasi khusus tetap ada (jika Anda butuh kustomisasi lebih)
+      # - ./etc:/cowrie/etc
+    environment:
+      # --- INI ADALAH "MINI SCRIPT" ANDA ---
+      # 1. Mengaktifkan plugin output_http
+      - COWRIE_OUTPUT_HTTP_ENABLED=true
+      # 2. Masukkan URL Webhook n8n Anda di sini
+      - COWRIE_OUTPUT_HTTP_URL=https://n8n.samvivan.my.id/webhook-test/10e4c630-6bce-4038-8777-916fba8bdc28
+      # 3. (Opsional) Timeout jika n8n Anda lambat merespons
+      - COWRIE_OUTPUT_HTTP_TIMEOUT=5
+    restart: unless-stopped

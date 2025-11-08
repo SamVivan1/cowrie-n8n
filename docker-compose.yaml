@@ -24,7 +24,7 @@ services:
     depends_on:
       - cowrie
     environment:
-      - N8N_WEBHOOK_URL=https://n8n.example.com/webhook/cowrie-log
+      - N8N_WEBHOOK_URL=https://n8n.samvivan.my.id/webhook-test/10e4c630-6bce-4038-8777-916fba8bdc28
     volumes:
       - cowrie_logs:/logs
 
